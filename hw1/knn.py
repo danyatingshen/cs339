@@ -199,7 +199,7 @@ def main () :
     train = read_data(train)
     
     fold, gen = cross_validation (J, train, knn, seed, k, True)
-    print(fold,gen)
+    #print(fold,gen)
     result = mean_performance(fold,gen)
     print("The following are average of trainning error, 25 , 75 percentiles and average of generalization error if applicable: ")
     for item in result :
