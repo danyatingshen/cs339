@@ -114,7 +114,6 @@ def misclassify_rate (y, y_hat) :
 #- - - - - - - - - - - - - - - - - -- - - - - - - - - - - - - - - - - -
 def evaluate_misclassify (knn,testing, y, misclassify_rate, k_neigbor, training) :
     y,y_hat = knn(training,testing,k_neigbor)
-    #print(y,y_hat)
     miscal_rate = misclassify_rate(y, y_hat)
     return miscal_rate
 #----------------------------------------------------------------------------------
@@ -136,21 +135,29 @@ def cross_validation (J, trainning, knn, seed, k, istraining):
     random.Random(seed).shuffle(trainning)
     generator = (trainning[i:i+fold] for i in range(0, len(trainning), fold))
     master_fold_list = list(generator)
-    performance_fold = list()
-    performance_generalization = list()
+    validation_error = list()
+    trainning_error = list()
+    generalization_error = list()
     # option 1: returns the performance of the classifier for each fold.
     # option 2: 1,(234) -> 2,(134)..., return the generalization error
     for v_index in range(len(master_fold_list)) :
+        # for each fold:
         test = master_fold_list[v_index]
         temp = master_fold_list[:v_index]+master_fold_list[v_index+1:]
         train = helper_depack(temp)
-        y = helper_find_y(test)     # the labels
+        y = helper_find_y(test)
+        #validation error:
         score = evaluate_misclassify (knn,test, y, misclassify_rate, k, train)
-        performance_fold.append(score)    
+        validation_error.append(score)    
         if (istraining == True) :
-            score_2 = evaluate_misclassify (knn,test, y, misclassify_rate, k, test)
-            performance_generalization.append(score_2)
-    return performance_fold, performance_generalization
+            # trainning error: 
+            score_2 = evaluate_misclassify (knn,train, y, misclassify_rate, k, train)
+            trainning_error.append(score_2)
+            # generalization error:
+            score_3 = score - score_2
+            generalization_error.append(score_3)
+
+    return validation_error, trainning_error,generalization_error
 
 def helper_find_y (test) :
     y = list()
@@ -174,18 +181,20 @@ def helper_depack (train) :
 # mean performance 
 # 25th and 75th percentiles
 #- - - - - - - - - - - - - - - - - -- - - - - - - - - - - - - - - - - -
-def mean_performance (performance_fold,performance_generalization):
+def mean_performance (validation_error,trainning_error,generalization_error):
     result = list()
-    avg = sum(performance_fold)/len(performance_fold)
-    fold_75 = np.percentile(performance_fold, 75)
-    fold_25 = np.percentile(performance_fold, 25)
+    avg = sum(validation_error)/len(validation_error)
+    fold_75 = np.percentile(validation_error, 75)
+    fold_25 = np.percentile(validation_error, 25)
     result.append(avg)
     result.append(fold_25)
     result.append(fold_75)
     
-    if (len(performance_generalization) != 0) :
-        avg_2 = sum(performance_generalization)/len(performance_generalization)
+    if (len(trainning_error) != 0 and len(generalization_error) != 0) :
+        avg_2 = sum(trainning_error)/len(trainning_error)
         result.append(avg_2)
+        avg_3 = sum(generalization_error)/len(generalization_error)
+        result.append(avg_3)
     return result
     
 
@@ -220,15 +229,19 @@ def main () :
     J = 10
     k = 3
     seed = 123
+    istraining = True
     test, train = define_data()
     test_1 = read_data(test)
     another_test = read(test)
     train = read_data(train)
     
-    fold, gen = cross_validation (J, train, knn, seed, k, True)
-    #print(fold,gen)
-    result = mean_performance(fold,gen)
-    print("The following are average of trainning error, 25 , 75 percentiles and average of generalization error if applicable: ")
-    for item in result :
-        print(item)
+    validation_error,trainning_error,generalization_error = cross_validation (J, train, knn, seed, k, istraining)
+    #print(trainning_error,generalization_error)
+    result = mean_performance(validation_error,trainning_error,generalization_error)
+    print("Performance of each fold (average validation error): ",result[0])
+    print("validation error 25 and 75 percentiles: ",result[1],result[2])
+    if (istraining):
+        print("Average of Trainning error: ",result[3])
+        print("Average of generalization error: ",result[4])
 
+main()
