@@ -180,7 +180,6 @@ def define_data ():
     return df_1, df_2
 
 def read_data(df):
-    #df = pd.read_csv("../S1test.csv", header = None)
     data = []
     dim = np.shape(df)
     for i in range(dim[0]): ## for every row
