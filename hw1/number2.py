@@ -1,11 +1,13 @@
 # Testing and getting #2
+# Uses the knnpy.py functions
+
 
 ## importing pandas and numpy
 import numpy as np
 import pandas as pd
 import math
 import matplotlib.pyplot as plt # for visualization
-#from PIL import Image
+from PIL import Image
 ## Importing our knn program
 import knnpy
 
@@ -42,13 +44,13 @@ def data_setup(seed):
     nump_te_9 = te_9.to_numpy()
     mat_te_9 = nump_te_9[1].reshape(28, 28)
 
-    ## Check for the picture
-    """ Image.fromarray(np.uint8(mat_tr_5), "L").save("trial5", "JPEG")
+    ## Check for the picture.... For 2 (i)
+    Image.fromarray(np.uint8(mat_tr_5), "L").save("trial5", "JPEG")
     Image.fromarray(np.uint8(mat_tr_9), "L").save("trial9", "JPEG")
 
     Image.fromarray(np.uint8(mat_te_5), "L").save("test5", "JPEG")
     Image.fromarray(np.uint8(mat_te_9), "L").save("test9", "JPEG")
-     """
+    
     ## To minimize our time, we will only use third of our data
     total_tr = len(tr_5)//3
     total_te = len(te_5)//3
@@ -82,7 +84,7 @@ def get_result (train, test, k):
     seed = 123
     istraining = True
 
-    validation_error,trainning_error,generalization_error = knnpy.cross_validation (J, train, knnpy.knn, seed, k, istraining)
+    validation_error,trainning_error,generalization_error = knnpy.cross_validation (J, train, knnpy.knn_try, seed, k, istraining)
     #print(trainning_error,generalization_error)
     result = knnpy.mean_performance(validation_error,trainning_error,generalization_error)
     print("Performance of each fold (average validation error): ",result[0])
@@ -101,9 +103,8 @@ def define_data ():
 def main():
     t0 = time.time()
 
-    train_data, test_data = data_setup(1357)
-    #test_data, train = define_data()    # the shorter data for debugging
-    #train_data = knnpy.read(train)
+    train_data, test_data = data_setup(1357)    #For the Q 2 data set
+
     ## Generalization or not
     generalizaiton = True
 
@@ -115,7 +116,8 @@ def main():
     # Create a Pandas Excel writer using XlsxWriter as the engine.
     writer = pd.ExcelWriter('mean_error.xlsx', engine='xlsxwriter')
 
-    for i in range(1,15):
+    # For question 2 (ii)
+    """ for i in range(1,75):   # loop from k = 3 to 151 
     #for i in range(3):
         k = 1 + i*2
         result = get_result(train_data, test_data, k)
@@ -123,12 +125,28 @@ def main():
             error_tracker.loc[len(error_tracker)] = [k, result[0], result[1], result[2], result[3], result[4]]
         else:
             error_tracker.loc[len(error_tracker)] = [k, result[0], result[1], result[2], result[3], "NA"]
+    """
 
+    ## For question 2 (iii)
+    k = 77  # The best k we found is 77
+    istraining = True
+    y = knnpy.helper_find_y(test_data)
+    y_train = knnpy.helper_find_y(train_data)
+    validation_error = knnpy.evaluate_misclassify (knnpy.knn_try, test_data, y, knnpy.misclassify_rate, k, train_data)
+    trainning_error = knnpy.evaluate_misclassify (knnpy.knn_try, train_data, y_train, knnpy.misclassify_rate, k, train_data)
+    generalization_error = validation_error - trainning_error
+    #result = mean_performance(validation_error,trainning_error,generalization_error)
+    print("Performance of each fold (average validation error): ",validation_error)
+    if (istraining):
+        print("Average of Trainning error: ",trainning_error)
+        print("Average of generalization error: ",generalization_error)
+   
     error_tracker.to_excel(writer, index = False)
     writer.save()
     t1 = time.time()
 
     total = t1-t0
+    print("TOOK THIS LONG: ", total)
 
 
 
