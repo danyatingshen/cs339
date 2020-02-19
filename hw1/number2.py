@@ -102,12 +102,12 @@ def main():
     ## We make data frame and keep k value and the mean error after
     ### We then set the num of seeds here and loop
     max_loop = len(train_data)//2
-    error_tracker = pd.DataFrame(columns = ["k", "mean error", "25 percentile", "75 percentile", "avg generalization error"])
+    error_tracker = pd.DataFrame(columns = ["k", "mean error", "25 percentile", "75 percentile", "training ""avg generalization error"])
     
     # Create a Pandas Excel writer using XlsxWriter as the engine.
     writer = pd.ExcelWriter('mean_error.xlsx', engine='xlsxwriter')
 
-    for i in range(20):
+    for i in range(15,25):
     #for i in range(3):
         k = 1 + i*2
         result = get_result(train_data, test_data, k)
