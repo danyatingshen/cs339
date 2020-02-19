@@ -101,9 +101,9 @@ def define_data ():
 def main():
     t0 = time.time()
 
-    #train_data, test_data = data_setup()
-    test_data, train = define_data()    # the shorter data for debugging
-    train_data = knnpy.read(train)
+    train_data, test_data = data_setup(1357)
+    #test_data, train = define_data()    # the shorter data for debugging
+    #train_data = knnpy.read(train)
     ## Generalization or not
     generalizaiton = True
 
@@ -115,7 +115,7 @@ def main():
     # Create a Pandas Excel writer using XlsxWriter as the engine.
     writer = pd.ExcelWriter('mean_error.xlsx', engine='xlsxwriter')
 
-    for i in range(len(train_data)):
+    for i in range(1,15):
     #for i in range(3):
         k = 1 + i*2
         result = get_result(train_data, test_data, k)
