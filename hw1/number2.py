@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import math
 import matplotlib.pyplot as plt # for visualization
-from PIL import Image
+#from PIL import Image
 ## Importing our knn program
 import knnpy
 
@@ -43,12 +43,12 @@ def data_setup(seed):
     mat_te_9 = nump_te_9[1].reshape(28, 28)
 
     ## Check for the picture
-    Image.fromarray(np.uint8(mat_tr_5), "L").save("trial5", "JPEG")
+    """ Image.fromarray(np.uint8(mat_tr_5), "L").save("trial5", "JPEG")
     Image.fromarray(np.uint8(mat_tr_9), "L").save("trial9", "JPEG")
 
     Image.fromarray(np.uint8(mat_te_5), "L").save("test5", "JPEG")
     Image.fromarray(np.uint8(mat_te_9), "L").save("test9", "JPEG")
-    
+     """
     ## To minimize our time, we will only use third of our data
     total_tr = len(tr_5)//3
     total_te = len(te_5)//3
