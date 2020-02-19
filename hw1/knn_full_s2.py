@@ -1,13 +1,11 @@
 # Testing and getting #2
-# Uses the knn_main.py functions
-
 
 ## importing pandas and numpy
 import numpy as np
 import pandas as pd
 import math
 import matplotlib.pyplot as plt # for visualization
-from PIL import Image
+#from PIL import Image
 ## Importing our knn program
 import knn_main
 
@@ -44,13 +42,13 @@ def data_setup(seed):
     nump_te_9 = te_9.to_numpy()
     mat_te_9 = nump_te_9[1].reshape(28, 28)
 
-    ## Check for the picture.... For 2 (i)
-    Image.fromarray(np.uint8(mat_tr_5), "L").save("trial5", "JPEG")
+    ## Check for the picture
+    """ Image.fromarray(np.uint8(mat_tr_5), "L").save("trial5", "JPEG")
     Image.fromarray(np.uint8(mat_tr_9), "L").save("trial9", "JPEG")
 
     Image.fromarray(np.uint8(mat_te_5), "L").save("test5", "JPEG")
     Image.fromarray(np.uint8(mat_te_9), "L").save("test9", "JPEG")
-    
+     """
     ## To minimize our time, we will only use third of our data
     total_tr = len(tr_5)//3
     total_te = len(te_5)//3
@@ -65,10 +63,8 @@ def data_setup(seed):
     sampled_te_5 = te_5.sample(total_te, random_state=seed)
     sampled_te_9 = te_9.sample(total_te, random_state=seed)
 
-    '''  training_set = pd.concat([sampled_tr_5, sampled_tr_9], axis =0)
-    test_set = pd.concat([sampled_te_5, sampled_te_9], axis =0) '''
-    training_set = pd.concat([tr_5, tr_9], axis =0)
-    test_set = pd.concat([te_5, te_9], axis =0)
+    training_set = pd.concat([sampled_tr_5, sampled_tr_9], axis =0)
+    test_set = pd.concat([sampled_te_5, sampled_te_9], axis =0)
 
     train = knn_main.read(training_set)
     test = knn_main.read(test_set)
@@ -103,15 +99,30 @@ def define_data ():
     return df_1, df_2
 
 def main():
+    #train_data, test_data = data_setup(1357)
+    test_data, train = define_data()    # the shorter data for debugging
+    train_data = knn_main.read(train)
+    test_data = knn_main.read(train)
+    ## Generalization or not
+    istraining = True
+    k = 165 
+    y = knn_main.helper_find_y(test_data)
+    y_train = knn_main.helper_find_y(train_data)
+    validation_error = knn_main.evaluate_misclassify (knn_main.knn_try,test_data, y, knn_main.misclassify_rate, k, train_data)
+    trainning_error = knn_main.evaluate_misclassify (knn_main.knn_try,train_data, y_train, knn_main.misclassify_rate, k, train_data)
+    generalization_error = validation_error - trainning_error
+	#result = mean_performance(validation_error,trainning_error,generalization_error)
+    print("Performance of each fold (average validation error): ",validation_error)
+    if (istraining):
+        print("Average of Trainning error: ",trainning_error)
+        print("Average of generalization error: ",generalization_error)
+
+def other():
     t0 = time.time()
 
-    train_data, test_data = data_setup(1357)    #For the Q 2 data set
-
-    # code below is for the S2 data set
-    #train, test = define_data()
-    #train_data = knn_main.read(train)
-    #test_data = knn_main.read(test)
-
+    train_data, test_data = data_setup(1357)
+    #test_data, train = define_data()    # the shorter data for debugging
+    #train_data = knnpy.read(train)
     ## Generalization or not
     generalizaiton = True
 
@@ -121,10 +132,9 @@ def main():
     error_tracker = pd.DataFrame(columns = ["k", "validation error", "25 percentile", "75 percentile", "training error", "avg generalization error"])
     
     # Create a Pandas Excel writer using XlsxWriter as the engine.
-    writer = pd.ExcelWriter('Q2_new_mean_error.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('Q2mean_error.xlsx', engine='xlsxwriter')
 
-    # For question 2 (ii)
-    for i in range(0,15):   # loop from k = 1 to 15
+    for i in range(15,20):
     #for i in range(3):
         k = 1 + i*2
         result = get_result(train_data, test_data, k)
@@ -132,32 +142,30 @@ def main():
             error_tracker.loc[len(error_tracker)] = [k, result[0], result[1], result[2], result[3], result[4]]
         else:
             error_tracker.loc[len(error_tracker)] = [k, result[0], result[1], result[2], result[3], "NA"]
-    
 
-    ''' ## For question 2 (iii)
-    k = 77  # The best k we found is 77
+    error_tracker.to_excel(writer, index = False)
+    writer.save()
+    t1 = time.time()
+
+    total = t1-t0
     istraining = True
-    y = knn_main.helper_find_y(test_data)
-    y_train = knn_main.helper_find_y(train_data)
-    validation_error = knn_main.evaluate_misclassify (knn_main.knn_try, test_data, y, knn_main.misclassify_rate, k, train_data)
-    trainning_error = knn_main.evaluate_misclassify (knn_main.knn_try, train_data, y_train, knn_main.misclassify_rate, k, train_data)
+
+    print("Performance of each fold (average validation error): ",result[0])
+    print("validation error 25 and 75 percentiles: ",result[1],result[2])
+    if (knn_main.istraining):
+        print("Average of Trainning error: ",result[3])
+        print("Average of generalization error: ",result[4])
+    y = knn_main.helper_find_y(knn_main.test)
+    y_train = knn_main.helper_find_y(knn_main.train)
+    validation_error = knn_main.evaluate_misclassify (knn_main.knn,test_data, y, knn_main.misclassify_rate, k, train_data)
+    trainning_error = knn_main.evaluate_misclassify (knn_main.knn,train_data, y_train, knn_main.misclassify_rate, k, train_data)
     generalization_error = validation_error - trainning_error
     #result = mean_performance(validation_error,trainning_error,generalization_error)
     print("Performance of each fold (average validation error): ",validation_error)
     if (istraining):
         print("Average of Trainning error: ",trainning_error)
         print("Average of generalization error: ",generalization_error)
-    '''
-    error_tracker.to_excel(writer, index = False)
-    writer.save()
-    t1 = time.time()
 
-    total = t1-t0
-    print("TOOK THIS LONG: ", total)
-
-
-
-    
 
 if __name__ == '__main__':
     

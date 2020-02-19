@@ -73,7 +73,8 @@ def majority_class(k_neigh):
     for i in range(len(k_neigh)):
         label = k_neigh[i][0]
         if label in most_class:
-            most_class[label] = most_class[label]
+            most_class[label] = most_class[label] + 1
+
         else:
             most_class[label] = 1
     # now with the LabelVotes, we sort and pick the label type with greatest number of matches
@@ -181,6 +182,7 @@ def cross_validation (J, trainning, knn, seed, k, istraining):
         y = helper_find_y(test)
         y_train = helper_find_y(train)
         #validation error:
+        #knn,testing, y, misclassify_rate, k_neigbor, training
         score = evaluate_misclassify (knn,test, y, misclassify_rate, k, train)
         validation_error.append(score)    
         if (istraining == True) :
@@ -274,10 +276,9 @@ def main () :
     validation_error = evaluate_misclassify (knn,test, y, misclassify_rate, k, train)
     trainning_error = evaluate_misclassify (knn,train, y_train, misclassify_rate, k, train)
     generalization_error = validation_error - trainning_error
-    result = mean_performance(validation_error,trainning_error,generalization_error)
-    print("Performance of each fold (average validation error): ",result[0])
-    print("validation error 25 and 75 percentiles: ",result[1],result[2])
+    #result = mean_performance(validation_error,trainning_error,generalization_error)
+    print("Performance of each fold (average validation error): ",validation_error)
     if (istraining):
-        print("Average of Trainning error: ",result[3])
-        print("Average of generalization error: ",result[4])
-
+        print("Average of Trainning error: ",trainning_error)
+        print("Average of generalization error: ",generalization_error)
+main()

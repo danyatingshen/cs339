@@ -9,12 +9,18 @@ import pandas as pd
 from math import exp
 import copy 
 from scipy.spatial import distance
-import matplotlib.pyplot as plt 
 
 
 ## 1ai) function that computed euclidean distance
 ## find the distance between two vector points
 ## assuming the input is (class, input1, input2)
+def euclid_distance(vectorA, vectorB):
+    dist = 0
+    for i in range(1, len(vectorA)):
+        square = (vectorA[i]-vectorB[i]) * (vectorA[i]-vectorB[i])
+        dist += square
+    distance = math.sqrt(dist)
+    return distance
 
 ## Maybe more faster one
 def numpy_euclid(vectorA, vectorB):
@@ -174,12 +180,14 @@ def cross_validation (J, trainning, knn, seed, k, istraining):
         temp = master_fold_list[:v_index]+master_fold_list[v_index+1:]
         train = helper_depack(temp)
         y = helper_find_y(test)
+        y_train = helper_find_y(train)
         #validation error:
+        #knn,testing, y, misclassify_rate, k_neigbor, training
         score = evaluate_misclassify (knn,test, y, misclassify_rate, k, train)
         validation_error.append(score)    
         if (istraining == True) :
             # trainning error: 
-            score_2 = evaluate_misclassify (knn,train, y, misclassify_rate, k, train)
+            score_2 = evaluate_misclassify (knn,train, y_train, misclassify_rate, k, train)
             trainning_error.append(score_2)
             # generalization error:
             score_3 = score - score_2
@@ -231,6 +239,18 @@ def define_data ():
     df_2 = pd.read_csv("S1train.csv", header = None)
     return df_1, df_2
 
+def read_data(df):
+    #df = pd.read_csv("../S1test.csv", header = None)
+    data = []
+    dim = np.shape(df)
+    columns = df.columns
+    for i in range(dim[0]): ## for every row
+        temp = []
+        for j in range(dim[1]): ## append every column value
+            temp.append(df[columns[j]][i]) ## array of (class, input1, input2)
+        data.append(temp)
+    return data
+
 def read(df):
     data = []
     dim = np.shape(df)
@@ -243,69 +263,22 @@ def read(df):
 
 def main () :
     J = 10
+    k = 169
     seed = 123
     istraining = True
-    # read in data -> 2d array
     test, train = define_data()
     test = read(test)
     train = read(train)
-    
-    # k -> s1: 
-    k_s1 = list()
-    validation_error_s1 = list()
-    trainning_error_s1 = list()
-    generalization_error_s1 = list()
-    min_validation = 100000000000
-    min_trainning = 100000000000
-    min_generalization = 100000000000
-    for i in range(1,3) :
-        k = i
-        print(k)
-        validation_error,trainning_error,generalization_error = cross_validation (J, train, knn, seed, k, istraining)
-        result = mean_performance(validation_error,trainning_error,generalization_error)
-        if (result[0] < min_validation) : 
-            min_validation = k
-        if (result[1] < min_trainning) : 
-            min_trainning = k
-        if (result[2] < min_generalization) : 
-            min_generalization = k
-        k_s1.append(k)
-        validation_error_s1.append(round(result[0],2))
-        trainning_error_s1.append(round(result[3],2))
-        generalization_error_s1.append(round(result[4],2))
-    # plotting the points 
-    print(k_s1) 
-    print(validation_error_s1)
-    print(trainning_error_s1)
-    print(generalization_error_s1)
-    x = np.array(k_s1)
-    y = np.array(validation_error)
-    print(y.shape)
-    x1 = np.linspace(0, 1, 2)
-    x2 = np.linspace(0, 1, 10)
-    plt.plot(x1, x)
-    plt.plot(x2, y)
-    plt.show()
-    # plt.plot(x, y)  
-    # plt.xlabel('k') 
-    # plt.ylabel('validation_error') 
-    # plt.title('k vs. validation_error ') 
-    # plt.show() 
-
-    # plt.plot(k_s1, min_trainning)  
-    # plt.xlabel('k') 
-    # plt.ylabel('min_trainning') 
-    # plt.title('k vs. min_trainning ') 
-    # plt.show() 
-
-    # plt.plot(k_s1, min_generalization)  
-    # plt.xlabel('k') 
-    # plt.ylabel('min_generalization') 
-    # plt.title('k vs. min_generalization ') 
-    # plt.show() 
-
-    # print("Best k")
-    # print(min_validation)
-    # print(min_trainning)
-    # print(min_generalization)
+    #validation_error,trainning_error,generalization_error = cross_validation (J, train, knn, seed, k, istraining)
+    #print(trainning_error,generalization_error)
+    y = helper_find_y(test)
+    y_train = helper_find_y(train)
+    validation_error = evaluate_misclassify (knn,test, y, misclassify_rate, k, train)
+    trainning_error = evaluate_misclassify (knn,train, y_train, misclassify_rate, k, train)
+    generalization_error = validation_error - trainning_error
+    #result = mean_performance(validation_error,trainning_error,generalization_error)
+    print("Performance of each fold (average validation error): ",validation_error)
+    if (istraining):
+        print("Average of Trainning error: ",trainning_error)
+        print("Average of generalization error: ",generalization_error)
 main()
