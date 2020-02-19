@@ -90,12 +90,13 @@ def knn(train, test, k):
     y = []
     for i in range(len(test)): ## for every test row
         y.append(test[i][0]) ## The first element. 
-        #distance = distALL(test[i], train) ## create matrix of distances for the first test value
-        distance = npdistAll(test[i], train)    
+        distance = distALL(test[i], train) ## create matrix of distances for the first test value
+        #distance = npdistAll(test[i], train)    
         temp = pdAdd(train, distance) ## create temp dataset that has the distances in it
         k_values = k_neigh(temp, k) ## find the k nearest neighbors
         y_hat.append(majority_class(k_values)) ## append the most common value
     return y, y_hat
+
 
 def npdistOpt(given, train, k):
     nptrain = np.array(train)
