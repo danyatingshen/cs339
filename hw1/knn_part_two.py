@@ -14,13 +14,6 @@ from scipy.spatial import distance
 ## 1ai) function that computed euclidean distance
 ## find the distance between two vector points
 ## assuming the input is (class, input1, input2)
-def euclid_distance(vectorA, vectorB):
-    dist = 0
-    for i in range(1, len(vectorA)):
-        square = (vectorA[i]-vectorB[i]) * (vectorA[i]-vectorB[i])
-        dist += square
-    distance = math.sqrt(dist)
-    return distance
 
 ## Maybe more faster one
 def numpy_euclid(vectorA, vectorB):
