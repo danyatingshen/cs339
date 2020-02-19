@@ -10,6 +10,7 @@ from math import exp
 import copy 
 from scipy.spatial import distance
 
+
 ## 1ai) function that computed euclidean distance
 ## find the distance between two vector points
 ## assuming the input is (class, input1, input2)
@@ -37,6 +38,11 @@ def distALL(given, train):
         all_dist.append(numpy_euclid(given, train[i]))      # different distance function
     return all_dist
 
+def npdistAll(given, train):
+    nptrain = np.array(train)
+    npgiven = np.array(given)
+    return np.apply_along_axis(numpy_euclid, 1, nptrain, npgiven)
+
 ## 1aiii) find the indices by first adding the distance and then finding k nearest
 ## want to add the distance to the vector values so you know which vector has which distance to given feature vector
 ## expected ourput will be [class, input1, input2, distance]
@@ -45,6 +51,14 @@ def add(train, dist_all):
     for i in range(len(train)): 
         temp_added[i].append(dist_all[i])
     return temp_added
+
+
+def pdAdd(train, dist_all):
+    temp_added = pd.DataFrame(train)
+    temp_added["distances"] = dist_all
+    return temp_added.values.tolist() ## To return the list of list
+
+
 
 ## find the k nearest neighbors
 def k_neigh(data, k):
@@ -76,11 +90,30 @@ def knn(train, test, k):
     y = []
     for i in range(len(test)): ## for every test row
         y.append(test[i][0]) ## The first element. 
-        distance = distALL(test[i], train) ## create matrix of distances for the first test value
-        temp = add(train, distance) ## create temp dataset that has the distances in it
+        #distance = distALL(test[i], train) ## create matrix of distances for the first test value
+        distance = npdistAll(test[i], train)    
+        temp = pdAdd(train, distance) ## create temp dataset that has the distances in it
         k_values = k_neigh(temp, k) ## find the k nearest neighbors
         y_hat.append(majority_class(k_values)) ## append the most common value
     return y, y_hat
+
+def npdistOpt(given, train, k):
+    nptrain = np.array(train)
+    npgiven = np.array(given)
+    temp = pdAdd(nptrain, np.apply_along_axis(numpy_euclid, 1, nptrain, npgiven).tolist())
+    k_values = k_neigh(temp, k)  ## find the k nearest neighbors
+    return (majority_class(k_values))
+
+# My updated version. It may be slower
+def knn_try(train, test, k):
+    np_train = np.array(train)
+    np_test = np.array(test)
+    y = np_test[:, 0]   # the correct labels
+    y_hat = np.apply_along_axis(npdistOpt, 1, np_test, np_train, k)
+    return y, y_hat
+
+
+
 #----------------------------------------------------------------------------------
 # input: 
 # y and y_hat list 
@@ -244,4 +277,3 @@ def main () :
         print("Average of Trainning error: ",result[3])
         print("Average of generalization error: ",result[4])
 
-main()
