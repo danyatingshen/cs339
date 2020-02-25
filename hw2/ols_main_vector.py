@@ -51,11 +51,12 @@ def generate_predition_vector (x,w):
     x_index = 0
     for index in range(0,len(x)) :
         f = 0
-        current = x[index]
+        current = x[index][1]
         for power in range(0,len(w)):
             f = f + w[power] * current**power
         y.append(f)
     y = np.array(y)
+    print("bug",y)
     return y
 #----------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------
