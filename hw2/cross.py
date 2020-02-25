@@ -96,32 +96,40 @@ def helper_depack (train) :
 
 
 ## TO fix: the default parameter for D = N (number of data points)
-def best_poly_cross_validation (t, x, D, K = 2,seed = 1,istraining = False):
-    poly_Means = list()
-    poly_Stds = list()
-    tr_error_Means = list()
-    tr_error_Stds = list()
-
-    lamb = 0        # doesn't consider the ridge regression here (?)
-    lowest_order = 0    # will keep track the polynomial value with lowest MSE avg
-    lowest_mean = 9999999     #the lowest MSE avg from the lowest_order polynomial value
-    #for power in range(0, D+1):
+def best_poly_cross_validation (t, x, D = None, K = 2,seed = 1,istraining = False):
+    if (D == None) :
+        D = len(t)
+    validation_error_mean = list()
+    validation_error_std = list()
+    trainning_error_mean = list()
+    trainning_error_std = list()
+    lamb = 0        
+    lowest_order = 0    
+    lowest_mean = 9999999    
     for power in range(1, D+1):
         X = ols_main_vector.creates_predictor_matrix(x, power)
-        temp_mean, temp_std = cross_validation (t, X, K, seed,lamb, False)
-        poly_Means.append(temp_mean)
-        poly_Stds.append(temp_std)
-        if(lowest_mean > temp_mean):
-            lowest_mean = temp_mean
+        result = cross_validation (t, X, K,seed,lamb,istraining)
+
+        validation_mean = result[0]
+        validation_sdt = result[1]
+
+        validation_error_mean.append(validation_mean)
+        validation_error_std.append(validation_sdt)
+
+        if(lowest_mean > validation_mean):
+            lowest_mean = validation_mean
             lowest_order = power
+
         if (istraining == True):
-            temp_error_mean, temp_error_std = cross_validation (t, X, K, seed, lamb, True)
-            tr_error_Means.append(temp_error_mean)
-            tr_error_Stds.append(temp_error_std)
+            trainning_mean = result[2]
+            trainning_std = result[3]
+            trainning_error_mean.append(trainning_mean)
+            trainning_error_std.append(trainning_std)
+    
     if (istraining == True):        
-        return poly_Means, poly_Stds, lowest_mean, lowest_order, tr_error_Means, tr_error_Stds
+        return validation_error_mean, validation_error_std, lowest_mean, lowest_order, trainning_error_mean, trainning_error_std
     else:
-        return poly_Means, poly_Stds, lowest_mean, lowest_order
+        return validation_error_mean, validation_error_std, lowest_mean, lowest_order
 
             
     #  loop through each possibility of D from 0 to D
