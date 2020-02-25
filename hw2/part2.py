@@ -13,7 +13,19 @@ from numpy import ones
 import statistics
 import ols_main_vector
 
-
+def mean_squared_error(target, prediction):
+    #numpy check to see if need to be transformed
+    target_npCheck =  (type(target).__module__ == np.__name__)
+    prediction_npCheck = (type(prediction).__module__ == np.__name__)
+    
+    # check and transform the data to numpy
+    if (target_npCheck and prediction_npCheck == False):
+        target = np.array(target)
+        prediction = np.array(prediction)
+    
+    MSE = np.square(target - prediction).mean()
+    return MSE
+    
 # split to J different fold, 1 -> 234
 def cross_validation (t,X,J,seed,lamb, istraining) :
     # coancate t and X and named it X' and go to next step
@@ -39,6 +51,10 @@ def cross_validation (t,X,J,seed,lamb, istraining) :
         X_train = train[:,1:]
         # put train to ols_coefficent_prediction_lamda (X,t,lamb) and get w
         w = ols_main_vector.ols_coefficent_prediction_lamda(X_train,t_train,lamb)
+        print("ROUND",v_index)
+        print("X_test : ",X_test)
+        print("X_train",X_train)
+        print("W",w)
         # generate t_hat by calling generate_predition_vector(x,w) where w from previous step and x is test set
         t_hat = ols_main_vector.generate_predition_vector(X_test,w)
         # use MSE function to caluclate (t,t_hat) for error rate

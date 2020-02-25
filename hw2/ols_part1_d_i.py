@@ -12,6 +12,7 @@ from scipy.spatial import distance
 from matplotlib import pyplot as plt
 from numpy import ones
 import ols_main_vector
+from sklearn import preprocessing
 
 def main() : 
     data = ols_main_vector.define_data()
@@ -21,22 +22,26 @@ def main() :
     t = dataset_np[:,1]
     D = 3
     lamb = 0
-    w = ols_main_vector.ols(x,t,D,lamb)
+    w = ols_main_vector.ols(t,x,D,lamb)
     # g) 
-    # plt.scatter(x,t) 
-    # w_0 = w[0]
-    # w_1 = w[1]
-    # w_2 = w[2]
-    # w_3 = w[3]
-    # x = list(x)
-    # y = list(np.array(ols_main_vector.helper_poly (w_0,w_1,w_2,w_3,x)))
-    #print(x,y)
-    #plt.plot(x,y)
+    #plt.scatter(x,t) 
+    
+    w_0 = float(w[0])
+    w_1 = w[1]
+    w_2 = w[2]
+    w_3 = w[3]
+    x = list(x)
+    y = list(ols_main_vector.generate_predition_vector(x,w))
+    print(w)
+    print(x)
+    print(y)
+    plt.scatter(x,t)
+    plt.plot(x,y,'ro')
     # plt.xticks(np.arange(1920, 2020, 20))
     # plt.yticks(np.arange(10.5, 13, 0.5))
     # plt.xlabel('Year')
     # plt.ylabel('Winning Time(s)')
-    #plt.show()
+    plt.show()
 
 
 
@@ -49,7 +54,6 @@ def main() :
     #i)
     # x = np.array([[1],[2],[3]])
     # w = np.array([[2],[2],[2]])
-    y = ols_main_vector.generate_predition_vector(x,w)
-
+    # y = ols_main_vector.generate_predition_vector(x,w)
 
 main()

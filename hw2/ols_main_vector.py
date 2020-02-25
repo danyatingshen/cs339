@@ -43,6 +43,7 @@ def creates_predictor_matrix (predictor, D):
 def ols (t,x,D,lamb) :
     X = creates_predictor_matrix (x, D)
     w = ols_coefficent_prediction_lamda(X,t,lamb)
+    t_hat = generate_predition_vector(x,w)
     return w
 
 def generate_predition_vector (x,w):
@@ -55,7 +56,6 @@ def generate_predition_vector (x,w):
             f = f + w[power] * current**power
         y.append(f)
     y = np.array(y)
-    print(y)
     return y
 #----------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------
