@@ -50,15 +50,17 @@ def cross_validation (t,X,J,seed,lamb, istraining) :
         t_train = train[:,0]
         X_test = test[:,1:]
         X_train = train[:,1:]
+        X_test_x = test[:,2]
+        X_train_x = train[:,2]
         # put train to ols_coefficent_prediction_lamda (X,t,lamb) and get w
         w = ols_main_vector.ols_coefficent_prediction_lamda(X_train,t_train,lamb)
         # generate t_hat by calling generate_predition_vector(x,w) where w from previous step and x is test set
-        t_hat = ols_main_vector.generate_predition_vector(X_test,w)
+        t_hat = ols_main_vector.generate_predition_vector(X_test_x,w)
         # use MSE function to caluclate (t,t_hat) for error rate
         socre = mean_squared_error(t_test,t_hat)
         MSE_list_validation.append(socre)
         if (istraining) :
-            t_hat_trainning_error = ols_main_vector.generate_predition_vector(X_train,w)
+            t_hat_trainning_error = ols_main_vector.generate_predition_vector(X_train_x,w)
             # use MSE function to caluclate (t,t_hat) for error rate
             socre_2 = mean_squared_error(t_train,t_hat_trainning_error)
             MSE_list_trainning.append(socre_2)
@@ -141,21 +143,24 @@ def best_poly_cross_validation (t, x, D = None, K = 2,seed = 1,istraining = Fals
     
     # find and return the polynomial order with the lowest average cross-validation MSE
 
+def define_data ():
+    df = pd.read_csv("womens100.csv", header = None)
+    return df
 
 def main() :
-    #dataset_np = np.array([[4,3,2],[8,2,7],[15,3,9],[4,5,6],[9,5,2],[7,9,4]])
-    data = ols_main_vector.define_data()
+    #data = np.array([[4,3,2],[8,2,7],[15,3,9],[4,5,6],[9,5,2],[7,9,4]])
+    data = define_data()
     dataset_array = ols_main_vector.read(data)
     dataset_np = np.array(dataset_array)
     x = dataset_np[:,0]
     t = dataset_np[:,1]
-    D = 10
+    D = 2
     J = 3
     seed = 123
     istraining = True
     lamb = 0
     
     #cross_validation (t,x,J,seed,lamb, istraining)
-    #print(best_poly_cross_validation (t, x, D, J, seed, istraining))
+    print(best_poly_cross_validation (t, x, D, J, seed, istraining))
 
 main()
