@@ -49,8 +49,9 @@ def main() :
     x = list(x)
     lambda_list = [1,10,100,10000]
     for i in lambda_list :
-        w = ols_main_vector.ols(x,t,D,i)
+        w = ols_main_vector.ols(t,x,D,i)
         print("lambda:",i, "with the result",w)
         y = list(ols_main_vector.generate_predition_vector(x,w))
+        print(y)
 
 main()

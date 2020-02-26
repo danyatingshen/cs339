@@ -1,4 +1,4 @@
-# Amanda Shen 
+# Amanda Shen, Michelle Liu, Eunjun Choo 
 import random
 import csv
 import math
@@ -11,9 +11,6 @@ import copy
 from scipy.spatial import distance
 from matplotlib import pyplot as plt
 from numpy import ones
-
-## The global global variable that we will divide by at the end and then multiply for standardization
-global_max_X = 1
 
 #----------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------
@@ -50,7 +47,7 @@ def ols (t,x,D,lamb) :
     X = creates_predictor_matrix (x, D)
     w = ols_coefficent_prediction_lamda(X,t,lamb)
     t_hat = generate_predition_vector(x,w)
-    return w
+    return t_hat
 
 def generate_predition_vector (x,w):
     y = list()
@@ -63,29 +60,7 @@ def generate_predition_vector (x,w):
         y.append(f)
     y = np.array(y)
     return y
-'''
-def generate_predition_vector (x,w):
-    y = list()
-    x_index = 0
-    ## Before proceeding, we need to make sure if 
-    # x array is not array of array
-    #if ((type(x[0]) is np.ndarray) == True):
-        # if in this for-loop, it means test variable is an array of an array
-        #x = x[0]  
-    for index in range(0,len(x)) :
-        f = 0
-        #current = x[index][1]
-        #x[index][1] = x[index][1]*global_max_X
-        
 
-        for power in range(0,len(w)):
-            # we also need to multiply back our global max x
-            current = x[index][power]*global_max_X
-            f = f + w[power] * current**power
-        y.append(f)
-    y = np.array(y)
-    return y
-'''
 #----------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------
 def define_data ():
