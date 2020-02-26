@@ -53,9 +53,4 @@ def main() :
         print("lambda:",i, "with the result",w)
         y = list(ols_main_vector.generate_predition_vector(x,w))
 
-    #i)
-    # x = np.array([[1],[2],[3]])
-    # w = np.array([[2],[2],[2]])
-    # y = ols_main_vector.generate_predition_vector(x,w)
-
 main()
