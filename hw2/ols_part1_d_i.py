@@ -26,30 +26,32 @@ def main() :
     # g) 
     #plt.scatter(x,t) 
     #print(x,t)
-    w_0 = float(w[0])
-    w_1 = w[1]
-    w_2 = w[2]
-    w_3 = w[3]
-    x = list(x)
-    y = list(ols_main_vector.generate_predition_vector(x,w))
-    print(w)
-    print(x)
-    print(y)
-    plt.scatter(x,t)
-    plt.plot(x,y,'ro')
-    # plt.xticks(np.arange(1920, 2020, 20))
-    # plt.yticks(np.arange(10.5, 13, 0.5))
-    # plt.xlabel('Year')
-    # plt.ylabel('Winning Time(s)')
-    plt.show()
+    # w_0 = float(w[0])
+    # w_1 = w[1]
+    # w_2 = w[2]
+    # w_3 = w[3]
+    # x = list(x)
+    # y = list(ols_main_vector.generate_predition_vector(x,w))
+    # print(w)
+    # print(x)
+    # print(y)
+    # plt.scatter(x,t)
+    # plt.plot(x,y,'ro')
+    # # plt.xticks(np.arange(1920, 2020, 20))
+    # # plt.yticks(np.arange(10.5, 13, 0.5))
+    # # plt.xlabel('Year')
+    # # plt.ylabel('Winning Time(s)')
+    # plt.show()
 
 
 
     #h)
-    # lambda_list = [1,10,100,10000]
-    # for i in lambda_list :
-    #     result = ols_main_vector.ols(x,t,D,i)
-    #     print(result)
+    x = list(x)
+    lambda_list = [1,10,100,10000]
+    for i in lambda_list :
+        w = ols_main_vector.ols(x,t,D,i)
+        print("lambda:",i, "with the result",w)
+        y = list(ols_main_vector.generate_predition_vector(x,w))
 
     #i)
     # x = np.array([[1],[2],[3]])
