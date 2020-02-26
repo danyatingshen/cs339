@@ -16,7 +16,7 @@ from matplotlib import pyplot as plt
 # Need to compute average of x, t, xt, x^2
 def simple_coefficent_prediction (dataset) :
     x_mean,t_mean,xt_mean,x_sq_mean = helper_average(dataset)
-    print(x_mean,t_mean,xt_mean,x_sq_mean)
+    #print(x_mean,t_mean,xt_mean,x_sq_mean)
     w_0,w_1 = helper_coefficent(x_mean,t_mean,xt_mean,x_sq_mean)
     return w_0, w_1
 

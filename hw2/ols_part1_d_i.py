@@ -25,7 +25,7 @@ def main() :
     w = ols_main_vector.ols(t,x,D,lamb)
     # g) 
     #plt.scatter(x,t) 
-    
+    #print(x,t)
     w_0 = float(w[0])
     w_1 = w[1]
     w_2 = w[2]

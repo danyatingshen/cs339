@@ -13,8 +13,6 @@ from numpy import ones
 import statistics
 import ols_main_vector
 
-
-
 def mean_squared_error(target, prediction):
     #numpy check to see if need to be transformed
     target_npCheck =  (type(target) is np.__name__)
@@ -35,8 +33,10 @@ def cross_validation (t,X,J,seed,lamb, istraining) :
     X_prime = X_prime.tolist()
     trainning = X_prime
     # random split X' to J fold -> A list of list of list
-    total_length = len(trainning)
+    total_length = len(trainning)   
     fold = int(total_length/J)
+    if fold < 1 :
+        fold = 1
     random.Random(seed).shuffle(trainning)
     generator = (trainning[i:i+fold] for i in range(0, len(trainning), fold))
     master_fold_list = list(generator)
@@ -113,6 +113,7 @@ def best_poly_cross_validation (t, x, D = None, K = 2,seed = 1,istraining = Fals
     lowest_order = 0    
     lowest_mean = 9999999    
     for power in range(1, D+1):
+        #print("TESTING:",power)
         X = ols_main_vector.creates_predictor_matrix(x, power)
         result = cross_validation (t, X, K,seed,lamb,istraining)
 
@@ -131,6 +132,10 @@ def best_poly_cross_validation (t, x, D = None, K = 2,seed = 1,istraining = Fals
             trainning_std = result[3]
             trainning_error_mean.append(trainning_mean)
             trainning_error_std.append(trainning_std)
+        # 
+        # print(validation_mean)
+        # print(trainning_mean)
+        # print()
     
     if (istraining == True):        
         return validation_error_mean, validation_error_std, lowest_mean, lowest_order, trainning_error_mean, trainning_error_std
@@ -187,8 +192,8 @@ def main() :
     #print(best_poly_cross_validation (t, x, 0, D, J, seed, istraining))
     #meanerror = womentesting(dataset_np, 1)
     #print(meanerror)
-    x_standardized = standardization_X(x)
+    #x_standardized = standardization_X(x)
 
 
-    optimal_order(t,x_standardized, J)
+    optimal_order(t,x,J)
 main()
