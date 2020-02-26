@@ -52,7 +52,6 @@ def cross_validation (t,X,J,seed,lamb, istraining) :
         # put train to ols_coefficent_prediction_lamda (X,t,lamb) and get w
         w = ols_main_vector.ols_coefficent_prediction_lamda(X_train,t_train,lamb)
         # generate t_hat by calling generate_predition_vector(x,w) where w from previous step and x is test set
-        print(X_test)
         t_hat = ols_main_vector.generate_predition_vector(X_test,w)
         # use MSE function to caluclate (t,t_hat) for error rate
         socre = mean_squared_error(t_test,t_hat)
@@ -76,47 +75,47 @@ def helper_depack (train) :
             result.append(j)
     return result
 
-# def best_poly_cross_validation (t, x, D = len(t), K = 2,seed = 1,istraining = False) :
-#     poly_Means = list()
-#     poly_Stds = list()
-#     tr_error_Means = list()
-#     tr_error_Stds = list()
+def best_poly_cross_validation (t, x, D = len(t), K = 2,seed = 1,istraining = False) :
+    poly_Means = list()
+    poly_Stds = list()
+    tr_error_Means = list()
+    tr_error_Stds = list()
 
-#     lamb = 0        # doesn't consider the ridge regression here (?)
-#     lowest_order = 0    # will keep track the polynomial value with lowest MSE avg
-#     lowest_mean = 9999999     #the lowest MSE avg from the lowest_order polynomial value
-#     if (istraining == False):
-#         for power in range(0, D+1):
-#             predictor_matrix = ols_main_vector.creates_predictor_matrix(x, power)
-#             temp_mean, temp_std = cross_validation (t,x, K, seed,lamb, istraining)
-#             poly_Means.append(temp_mean)
-#             poly_Stds.append(temp_std)
-#             if(lowest_mean > temp_mean):
-#                 lowest_mean = temp_mean
-#                 lowest_order = power
-#         return poly_Means, poly_Stds, lowest_mean, lowest_order
-#     else:
-#         for power in range(0, D+1):
-#             predictor_matrix = ols_main_vector.creates_predictor_matrix(x, power)
-#             temp_mean, temp_std, temp_error = cross_validation (t,x, K, seed,lamb, istraining)
-#             poly_Means.append(temp_mean)
-#             poly_Stds.append(temp_std)
-#             tr_error_Means.append(statistics.mean(temp_error))
-#             tr_error_Stds.append(statistics.mean(temp_error))
-#             if(lowest_mean > temp_mean):
-#                 lowest_mean = temp_mean
-#                 lowest_order = power
-#         return poly_Means, poly_Stds, lowest_mean, lowest_order, tr_error_Means, tr_error_Stds
+    lamb = 0        # doesn't consider the ridge regression here (?)
+    lowest_order = 0    # will keep track the polynomial value with lowest MSE avg
+    lowest_mean = 9999999     #the lowest MSE avg from the lowest_order polynomial value
+    if (istraining == False):
+        for power in range(0, D+1):
+            predictor_matrix = ols_main_vector.creates_predictor_matrix(x, power)
+            temp_mean, temp_std = cross_validation (t,x, K, seed,lamb, istraining)
+            poly_Means.append(temp_mean)
+            poly_Stds.append(temp_std)
+            if(lowest_mean > temp_mean):
+                lowest_mean = temp_mean
+                lowest_order = power
+        return poly_Means, poly_Stds, lowest_mean, lowest_order
+    else:
+        for power in range(0, D+1):
+            predictor_matrix = ols_main_vector.creates_predictor_matrix(x, power)
+            temp_mean, temp_std, temp_error = cross_validation (t,x, K, seed,lamb, istraining)
+            poly_Means.append(temp_mean)
+            poly_Stds.append(temp_std)
+            tr_error_Means.append(statistics.mean(temp_error))
+            tr_error_Stds.append(statistics.mean(temp_error))
+            if(lowest_mean > temp_mean):
+                lowest_mean = temp_mean
+                lowest_order = power
+        return poly_Means, poly_Stds, lowest_mean, lowest_order, tr_error_Means, tr_error_Stds
 
             
-     #loop through each possibility of D from 0 to D
-        # use current index = D
-        # call creates_predictor_matrix to create X according to D
-        # call cross validation and get mean and standard deviation for each order 
-        # if istrianning == True, 
-            # evaluate_misclassify (knn,train, y_train, misclassify_rate, k, train) for trainning erorr
+    #  loop through each possibility of D from 0 to D
+    #     use current index = D
+    #     call creates_predictor_matrix to create X according to D
+    #     call cross validation and get mean and standard deviation for each order 
+    #     if istrianning == True, 
+    #         evaluate_misclassify (knn,train, y_train, misclassify_rate, k, train) for trainning erorr
     
-    # find and return the polynomial order with the lowest average cross-validation MSE
+#    find and return the polynomial order with the lowest average cross-validation MSE
 
 
 def main() :
