@@ -13,6 +13,8 @@ from numpy import ones
 import statistics
 import ols_main_vector
 
+
+
 def mean_squared_error(target, prediction):
     #numpy check to see if need to be transformed
     target_npCheck =  (type(target) is np.__name__)
@@ -33,10 +35,11 @@ def cross_validation (t,X,J,seed,lamb, istraining) :
     X_prime = X_prime.tolist()
     trainning = X_prime
     # random split X' to J fold -> A list of list of list
-    total_length = len(trainning)   
+    total_length = len(trainning)
     fold = int(total_length/J)
     if fold < 1 :
         fold = 1
+
     random.Random(seed).shuffle(trainning)
     generator = (trainning[i:i+fold] for i in range(0, len(trainning), fold))
     master_fold_list = list(generator)
@@ -113,7 +116,6 @@ def best_poly_cross_validation (t, x, D = None, K = 2,seed = 1,istraining = Fals
     lowest_order = 0    
     lowest_mean = 9999999    
     for power in range(1, D+1):
-        #print("TESTING:",power)
         X = ols_main_vector.creates_predictor_matrix(x, power)
         result = cross_validation (t, X, K,seed,lamb,istraining)
 
@@ -132,10 +134,6 @@ def best_poly_cross_validation (t, x, D = None, K = 2,seed = 1,istraining = Fals
             trainning_std = result[3]
             trainning_error_mean.append(trainning_mean)
             trainning_error_std.append(trainning_std)
-        # 
-        # print(validation_mean)
-        # print(trainning_mean)
-        # print()
     
     if (istraining == True):        
         return validation_error_mean, validation_error_std, lowest_mean, lowest_order, trainning_error_mean, trainning_error_std
@@ -143,21 +141,27 @@ def best_poly_cross_validation (t, x, D = None, K = 2,seed = 1,istraining = Fals
         return validation_error_mean, validation_error_std, lowest_mean, lowest_order
 
             
-def optimal_order(t, x, K):
-    D = len(x) -1
+def optimal_order(t, x, K, seed):
+    D = len(x)
     lamb = 0
-    poly_Means, poly_Stds, lowest_mean, lowest_order,tr_error_Means, tr_error_Stds = best_poly_cross_validation(t, x, D, K, 797897, True)
+    poly_Means, poly_Stds, lowest_mean, lowest_order,tr_error_Means, tr_error_Stds = best_poly_cross_validation(t, x, D, K, seed, True)
     plot_index = list(range(1,D+1))
     fig = plt.figure()
     plt.errorbar(plot_index,poly_Means, yerr = poly_Stds)
-    plt.show()
-    Excel_ified(poly_Means, poly_Stds, "synthdata")
+    fig.update
+    #plt.show()
+    Excel_ified(poly_Means, poly_Stds,tr_error_Means, tr_error_Stds, "womens_k_10")
+    
+    
 
 #put the data to excel
-def Excel_ified(Means, Stds, name = "error rate"):
+def Excel_ified(Means, Stds, tr_mean, tr_stds, name = "error rate"):
     pd_excel = pd.DataFrame(Means)
     pd_excel["Above 1 SD"] = np.add(Means, Stds)
     pd_excel["Below 1 SD"] = np.subtract(Means, Stds)
+    pd_excel["train_mean"] = tr_mean
+    pd_excel["tr_above 1 SD"] = np.add(tr_mean, tr_stds)
+    pd_excel["tr_below 1 SD"] = np.subtract(tr_mean, tr_stds)
     # making sure our index starts from 1 not 0
     pd_excel.index = pd_excel.index + 1     
     writer = pd.ExcelWriter(str(name) + '.xlsx', engine='xlsxwriter')
@@ -181,19 +185,15 @@ def main() :
     dataset_np = np.array(dataset_array)
     x = dataset_np[:,0]
     t = dataset_np[:,1]
-    D = 10
-    J = 50
+    J = 10
     seed = 123
     istraining = True
-    lamb = 10
     
     #cross_validation (t,x,J,seed,lamb, istraining)
     #print(best_poly_cross_validation (t, x, lamb, D, J, seed, istraining))
     #print(best_poly_cross_validation (t, x, 0, D, J, seed, istraining))
     #meanerror = womentesting(dataset_np, 1)
     #print(meanerror)
-    #x_standardized = standardization_X(x)
 
-
-    optimal_order(t,x,J)
+    optimal_order(t,x, J, seed)
 main()
