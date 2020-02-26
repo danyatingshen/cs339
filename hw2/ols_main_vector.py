@@ -89,7 +89,7 @@ def generate_predition_vector (x,w):
 #----------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------
 def define_data ():
-    df = pd.read_csv("womens100.csv", header = None)
+    df = pd.read_csv("synthdata2016.csv", header = None)
     return df
 
 def read(df):
