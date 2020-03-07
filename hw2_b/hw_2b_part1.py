@@ -70,8 +70,8 @@ def main():
     y = 3.5
     lamb = 20
     random.seed(631)
-    #relationship(20,100)
+    relationship(20,100)
     #relationship(45,200)
-    relationship(80,200)
+    #relationship(80,200)
     
 main()
